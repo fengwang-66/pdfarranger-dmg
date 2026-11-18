@@ -2219,7 +2219,6 @@ class PdfArranger(Gtk.Application):
             self.range_select_dialog()
         self.iv_selection_changed()
 
-    @staticmethod
     def iv_drag_begin(self, iconview, context):
         """Sets custom drag icon."""
         self.drag_origin_self = True
