@@ -169,9 +169,21 @@ def _enable_diagnostics(app):
 
 
 def main():
+    from gi.repository import Gio, GLib
     from pdfarranger.pdfarranger import PdfArranger
 
+    def on_open(application, files, _count, _hint):
+        if application.window is None:
+            application.activate()
+        GLib.idle_add(application.add_files, list(files))
+        application.window.present()
+
     app = PdfArranger()
+    app.set_flags(app.get_flags() | Gio.ApplicationFlags.HANDLES_OPEN)
+    # Enable the macOS file-open delegate in GTK's Quartz backend.
+    app.set_property("register-session", True)
+    app.connect("open", on_open)
+
     if os.environ.get("PDFARRANGER_MACOS_DIAG"):
         _enable_diagnostics(app)
     sys.exit(app.run(sys.argv) or 0)
